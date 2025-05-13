@@ -18,12 +18,13 @@ def chat(mensaje_usuario: str) -> str:
     # 3. Extrae y devuelve el texto
     return response.choices[0].message.content
 
-def shorten(url: str, descripcion: str,) -> str:
+def shorten(url: str, content: str) -> str:
     prompt = (
-        f"tengo esta url " + url +" y esta descripcion " + descripcion + " quiero transformar la url " +
-            "y descripciona un texto corto representativo y en el menor cantidad de caracteres posibles y" + 
-            "solo con minusculas, debes solo entregarme una sola opcion de nombre corto y nada mas, ideal " +
-            "solo desde 4 a 10 caracteres basandose principalmente en la descripcion")
+        f"Tengo esta URL: {url} y este contenido extraído de la URL: {content}. "
+        "Quiero que resumas el contenido. Con este resumen genera un nombre corto de hasta 12 caracteres, solo en minúsculas."
+        "Para el resumen no incluyas palabras relacionadas con partes del HTML como meta tags, meta description, meta keywords, etc. "
+        "Si es necesario utiliza alguna palabra clave de la URL. Me debes responder con solo una opcion de frase, con dos palabras."
+    )
     try:
         response = client.chat.completions.create(
             model="gpt-4.1-nano", 
@@ -31,6 +32,6 @@ def shorten(url: str, descripcion: str,) -> str:
                 {"role": "user", "content": prompt}
             ]
         )
-        return response.choices[0].message.content
+        return response.choices[0].message.content.replace(" ", "-")
     except Exception as e:
         print(e)
